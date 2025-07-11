@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"dagi/goRestAPI.com/models"
@@ -22,6 +23,14 @@ server.Run(":1234")
  }
  func createEvent(context *gin.Context){
   var event models.Event
-  context.ShouldBindJSON(&event)
-  
+ err:=  context.ShouldBindJSON(&event)
+ fmt.Println("err",err)
+  if err!= nil{
+	context.JSON(http.StatusBadRequest,gin.H{"message":"could not parse request data"})
+	return
+  }
+  	event.ID=1
+	event.UserId=1
+	event.Save()
+	context.JSON(http.StatusCreated,gin.H{"message":"event created!","event":event})
  }
