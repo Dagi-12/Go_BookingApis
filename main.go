@@ -1,45 +1,9 @@
-// package main
-
-// import (
-// 	"fmt"
-// 	"net/http"
-// 	"dagi/goRestAPI.com/db"
-// 	"dagi/goRestAPI.com/models"
-// 	"github.com/gin-gonic/gin"
-// )
-// func main() {
-// db.InitDB()
-// server:=gin.Default()
-
-// server.GET("/events",getEvents)
-// server.POST("/events",createEvent)
-
-// server.Run(":1234")
-
-// }
-//
-//	 func getEvents(context *gin.Context)  {
-//		events:=models.GetAllEvents()
-//		context.JSON(http.StatusOK,events)
-//	 }
-//	 func createEvent(context *gin.Context){
-//	  var event models.Event
-//	 err:=  context.ShouldBindJSON(&event)
-//	 fmt.Println("err",err)
-//	  if err!= nil{
-//		context.JSON(http.StatusBadRequest,gin.H{"message":"could not parse request data"})
-//		return
-//	  }
-//	  	event.ID=1
-//		event.UserId=1
-//		event.Save()
-//		context.JSON(http.StatusCreated,gin.H{"message":"event created!","event":event})
-//	 }
 package main
 
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"dagi/goRestAPI.com/db"
 	"dagi/goRestAPI.com/models"
@@ -50,9 +14,10 @@ import (
 func main() {
 	db.InitDB()
 
-	server := gin.Default()
-	server.GET("/events", getEvents)
+	server := gin.Default()	
 	server.POST("/events", createEvent)
+	server.GET("/events", getEvents)
+	server.GET("/events/:eventId", getSingleEvent)
 
 	server.Run(":1234")
 }
@@ -67,6 +32,22 @@ func getEvents(context *gin.Context) {
 	context.JSON(http.StatusOK, events)
 }
 
+func getSingleEvent(context *gin.Context){
+	eventId,err:=strconv.ParseInt(context.Param("eventId"),10,64)
+	if err!=nil{
+		context.JSON(http.StatusInternalServerError,gin.H{"message":"couldn't parse event id"})
+		return
+	}
+	event,err:=models.GetEventById(eventId)
+	if err!=nil{
+		context.JSON(http.StatusInternalServerError,gin.H{"message":"Cant get the specified event"})
+		return
+	}
+	context.JSON(http.StatusOK,event)
+
+
+}
+
 func createEvent(context *gin.Context) {
 	var event models.Event
 
@@ -79,7 +60,7 @@ func createEvent(context *gin.Context) {
 
 	event.ID = 1
 	event.UserId = 1
-	err =event.Save()
+	err = event.Save()
 	if err !=nil{
 		context.JSON(http.StatusBadRequest,gin.H{"message:":"Can not save file"})
 		return 

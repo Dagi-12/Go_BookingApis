@@ -1,24 +1,3 @@
-// package models
-
-// import "time"
-
-// type Event struct {
-// 	ID          int
-// 	Name        string `binding:"required"`
-// 	Description string `binding:"required"`
-// 	Location    string `binding:"required"`
-// 	DateTime    time.Time `binding:"required"`
-// 	UserId      int
-// }
-// var events =[]Event{}
-
-// func ( e Event) Save(){
-// events = append(events, e)
-// }
-
-// func  GetAllEvents()[]Event{
-// return events
-// }
 package models
 
 import (
@@ -38,7 +17,7 @@ type Event struct {
 
 var events = []Event{}
 
-func (e Event) Save()error {
+func (e *Event) Save()error {
 	query:= `
 	INSERT INTO events(name,description,location,dateTime,user_id)
 	VALUES (?,?,?,?,?)
@@ -75,4 +54,14 @@ func GetAllEvents() ([]Event,error) {
 	events = append(events, event)
 	}
 	return events,nil
+}
+func GetEventById(eventId int64)(*Event,error){
+	query:="SELECT * FROM events WHERE id = ?"
+	row:=db.DB.QueryRow(query,eventId)	
+	var event Event
+	err:=row.Scan(&event.ID,&event.Name,&event.Description,&event.Location,&event.DateTime,&event.UserId)
+	if err!=nil{
+		return nil,err
+	}
+	return &event,nil
 }
