@@ -22,7 +22,7 @@ func getEvents(context *gin.Context) {
 func getSingleEvent(context *gin.Context) {
 	eventId, err := strconv.ParseInt(context.Param("eventId"), 10, 64)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "couldn't parse event id"})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "couldn't parse event id"})
 		return
 	}
 	event, err := models.GetEventById(eventId)
@@ -53,4 +53,33 @@ func createEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "event created!", "event": event})
+}
+
+func updateEvent(context *gin.Context){
+ eventId, err := strconv.ParseInt(context.Param("eventId"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "couldn't parse event id"})
+		return
+	}
+	
+ _,err = models.GetEventById(eventId)
+    if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "couldn't get event"})
+		return
+	}
+ var updatedEvent models.Event
+ err = context.ShouldBindJSON(&updatedEvent)
+ if err!=nil{
+	context.JSON(http.StatusBadRequest, gin.H{"message": "couldn't parse request data"})
+	return
+ }
+ updatedEvent.ID = eventId
+ err=updatedEvent.UpdatedEvent()
+ fmt.Printf("dfssdwsdew",err)
+ if err!=nil{
+	context.JSON(http.StatusInternalServerError, gin.H{"message": "couldn't update event"})
+	return
+ }
+ context.JSON(http.StatusOK,gin.H{"message":"Event updated successfully"})
+
 }
