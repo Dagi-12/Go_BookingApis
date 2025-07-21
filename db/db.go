@@ -19,23 +19,23 @@
 // 	createTables()
 // }
 
-// func createTables(){
-// 	createEventsTable := `
-// 	CREATE table IF NOT EXISTS events(
-// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-// 	name TEXT NOT NULL,
-// 	description TEXT NOT NULL,
-// 	location TEXT NOT NULL,
-// 	dateTime DATETIME NOT NULL,
-// 	user_id INTEGER 
-// 	)
-// 	`
-//    _,err:=DB.Exec(createEventsTable)
-//    if err!=nil{
-// 	fmt.Println("err",err)
-// 	panic("cant create event table")
-//    }
-// }
+//	func createTables(){
+//		createEventsTable := `
+//		CREATE table IF NOT EXISTS events(
+//		id INTEGER PRIMARY KEY AUTOINCREMENT,
+//		name TEXT NOT NULL,
+//		description TEXT NOT NULL,
+//		location TEXT NOT NULL,
+//		dateTime DATETIME NOT NULL,
+//		user_id INTEGER
+//		)
+//		`
+//	   _,err:=DB.Exec(createEventsTable)
+//	   if err!=nil{
+//		fmt.Println("err",err)
+//		panic("cant create event table")
+//	   }
+//	}
 package db
 
 import (
@@ -61,16 +61,26 @@ func InitDB() {
 
 func createTables() {
 	createEventsTable := `
-	CREATE TABLE IF NOT EXISTS events(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
-		description TEXT NOT NULL,
-		location TEXT NOT NULL,
-		dateTime DATETIME NOT NULL,
-		user_id INTEGER
+CREATE TABLE IF NOT EXISTS events(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	location TEXT NOT NULL,
+	dateTime DATETIME NOT NULL,
+	user_id INTEGER
+	FOREIGN KEY(user_id) REFERENCES users(id)
 	);`
-
-	_, err := DB.Exec(createEventsTable)
+    createUser:=`
+CREATE TABLE IF NOT EXISTS users(
+ id INTEGER PRIMARY KEY AUTOINCREMENT,
+ email TEXT NOT NULL UNIQUE,
+ password TEXT NOT NULL,
+)`
+_,err:=DB.Exec(createUser)
+if err!=nil{
+	panic("can not create user table")
+}
+_, err = DB.Exec(createEventsTable)
 	if err != nil {
 		fmt.Println("err", err)
 		panic("can't create event table")
