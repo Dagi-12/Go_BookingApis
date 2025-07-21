@@ -2,6 +2,7 @@ package models
 
 import (
 	"dagi/goRestAPI.com/db"
+	"dagi/goRestAPI.com/utils"
 )
 
 type User struct {
@@ -16,8 +17,13 @@ func (u User) Save() error {
 	if err !=nil{
 		return err
 	}
+	hashPass,err:=utils.HashPassword(u.Password)
+	
+	if err!=nil{
+		return err
+	}
 	defer stmt.Close()
-	result,err:=stmt.Exec(u.Email,u.Password)
+	result,err:=stmt.Exec(u.Email,hashPass)
 	if err !=nil{
 		return err
 	}
