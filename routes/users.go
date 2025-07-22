@@ -2,6 +2,7 @@ package routes
 
 import (
 	"dagi/goRestAPI.com/models"
+	"dagi/goRestAPI.com/utils"
 	"fmt"
 	"net/http"
 
@@ -38,5 +39,11 @@ func signIn (context *gin.Context){
 		context.JSON(http.StatusUnauthorized,gin.H{"message":err.Error()})
 		return
 	}
-	context.JSON(http.StatusOK,gin.H{"message":"Login successful"})
+	token ,err:=utils.GenerateToken(user.Email,user.Id)
+	if err!=nil{
+		fmt.Println(err)
+		context.JSON(http.StatusInternalServerError,gin.H{"message":err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK,gin.H{"message":"Login successful","token":token})
 }
