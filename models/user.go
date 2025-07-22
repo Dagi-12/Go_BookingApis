@@ -3,6 +3,7 @@ package models
 import (
 	"dagi/goRestAPI.com/db"
 	"dagi/goRestAPI.com/utils"
+	"errors"
 )
 
 type User struct {
@@ -33,7 +34,7 @@ func (u User) Save() error {
 
 
 }
-func (u User) validateCredentials()error{
+func (u User) ValidateCredentials()error{
 	query:=`SELECT password FROM users WHERE email = ?`
 	row:=db.DB.QueryRow(query,u.Email)
 	var retrievedPassword string
@@ -41,5 +42,9 @@ func (u User) validateCredentials()error{
 	if err!=nil{
 		return err
 	}
-		
+	isPasswordValid:=utils.CheckPasswordHash(u.Password,retrievedPassword)
+	if !isPasswordValid{
+		return errors.New("Credentials is not valid")
+	}
+  return nil
 }

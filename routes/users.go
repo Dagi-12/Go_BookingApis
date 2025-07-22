@@ -30,5 +30,14 @@ func signIn (context *gin.Context){
 	if err!=nil{
 		fmt.Println(err)
 		context.JSON(http.StatusBadRequest,gin.H{"message:":"could not parse request body"})
+		return
 	}
+	err=user.ValidateCredentials()
+	if err!=nil{
+		fmt.Println(err)
+		context.JSON(http.StatusUnauthorized,gin.H{"message":err.Error()})
+		return
+	}
+	context.JSON(http.StatusOK,gin.H{"message":"Login successful"})
+	return
 }
