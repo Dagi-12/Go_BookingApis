@@ -39,5 +39,4 @@ func signIn (context *gin.Context){
 		return
 	}
 	context.JSON(http.StatusOK,gin.H{"message":"Login successful"})
-	return
 }
