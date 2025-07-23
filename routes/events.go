@@ -2,6 +2,7 @@ package routes
 
 import (
 	"dagi/goRestAPI.com/models"
+	"dagi/goRestAPI.com/utils"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -40,11 +41,15 @@ func createEvent(context *gin.Context) {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not Authorized"})
 		return
 	}
-
+	err:=utils.VerifyToken(token)
+if err!=nil{
+	context.JSON(http.StatusUnauthorized, gin.H{"message": err})
+	return 
+}
 
 	var event models.Event
 
-	err := context.ShouldBindJSON(&event)
+	err = context.ShouldBindJSON(&event)
 	if err != nil {
 		fmt.Println("err", err)
 		context.JSON(http.StatusBadRequest, gin.H{"message": "could not parse request data"})
