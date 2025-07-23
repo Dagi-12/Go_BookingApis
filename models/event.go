@@ -12,7 +12,7 @@ type Event struct {
 	Description string    `json:"description" binding:"required"`
 	Location    string    `json:"location" binding:"required"`
 	DateTime    time.Time `json:"dateTime" binding:"required"`
-	UserId      int       `json:"userId"`
+	UserId      int64     `json:"userId"`
 }
 
 var events = []Event{}

@@ -41,7 +41,7 @@ func createEvent(context *gin.Context) {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not Authorized"})
 		return
 	}
-	err:=utils.VerifyToken(token)
+	uId, err:=utils.VerifyToken(token)
 if err!=nil{
 	context.JSON(http.StatusUnauthorized, gin.H{"message": err})
 	return 
@@ -57,7 +57,7 @@ if err!=nil{
 	}
 
 	event.ID = 1
-	event.UserId = 1
+	event.UserId = uId
 	err = event.Save()
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message:": "Can not save file"})
