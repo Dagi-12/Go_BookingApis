@@ -104,7 +104,7 @@ userId:=context.GetInt64("userId")
 		return
 	}
 	if event.UserId != userId{
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "couldn't update event you are not authorized"})
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "couldn't Delete event you are not authorized"})
 		return
 	}
 err= event.DeleteEvent()
