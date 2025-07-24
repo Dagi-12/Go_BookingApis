@@ -48,13 +48,3 @@ func (u *User) ValidateCredentials()error{
 	}
   return nil
 }
-func(e Event) Register(userId int64)error{
-	query:="INSERT INTO registrations(eventId,userId)VALUES(?,?)"
-	stmt,err:=db.DB.Prepare(query)
-	if err!=nil{
-		return err
-	}
-	defer stmt.Close()
-	_,err=stmt.Exec(e.ID,userId)
-	return err
-}
